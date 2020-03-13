@@ -1,12 +1,13 @@
 
 plugins {
     id 'net.ltgt.apt-eclipse' version '0.21'
-    id("maven-publish") apply false
+    id("maven-publish")
 }
 
 allprojects {
 
   group = 'io.netlibs.zzz'
+  version = 'master-SNAPSHOT'
   
   repositories {
     jcenter()
@@ -23,22 +24,5 @@ wrapper {
 
 
 subprojects {
-    apply plugin: "maven-publish"
-    publishing {
-        repositories {
-            maven {
-                name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/netlibs/zzz")
-                credentials {
-                    username = System.getenv("GITHUB_ACTOR")
-                    password = System.getenv("GITHUB_TOKEN")
-                }
-            }
-        }
-        publications {
-            default(MavenPublication) {
-                from(components.java)
-            }
-        }
-    }
+
 }
