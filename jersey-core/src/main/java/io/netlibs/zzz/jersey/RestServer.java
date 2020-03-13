@@ -1,14 +1,11 @@
 package io.netlibs.zzz.jersey;
 
 import java.net.URI;
-import java.util.Collections;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.net.ssl.SSLContext;
 
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.binder.jvm.ExecutorServiceMetrics;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.NetworkListener;
 import org.glassfish.grizzly.nio.transport.TCPNIOTransport;
@@ -19,18 +16,13 @@ import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 
 import com.google.common.util.concurrent.AbstractService;
 
+import io.micrometer.core.instrument.MeterRegistry;
+
 public class RestServer extends AbstractService {
 
   private RestConfig resourceConfig;
-
   private HttpServer grizzlyServer;
-
   private MeterRegistry meterRegistry;
-
-  // Metric Constants
-  private static final String GRIZZLY_THREAD_POOL_KERNEL_METRIC = "grizzly.threadpool.kernel";
-  private static final String GRIZZLY_THREAD_POOL_WORKER_METRIC = "grizzly.threadpool.worker";
-
 
   private URI baseUri;
 
@@ -101,11 +93,6 @@ public class RestServer extends AbstractService {
         ktp.setMaxPoolSize(this.maxPoolSize);
         ktp.setQueueLimit(this.queueLimit);
 
-        // Connection metrics
-//        tport.getConnectionMonitoringConfig().addProbes(new ConnectionProbeAdapter(meterRegistry));
-        // Thread pool metrics
-//        wpc.getInitialMonitoringConfig().addProbes(new ThreadPoolProbeAdapter(meterRegistry, GRIZZLY_THREAD_POOL_WORKER_METRIC));
-//        ktp.getInitialMonitoringConfig().addProbes(new ThreadPoolProbeAdapter(meterRegistry, GRIZZLY_THREAD_POOL_KERNEL_METRIC));
       }
 
       this.grizzlyServer.start();
@@ -128,9 +115,15 @@ public class RestServer extends AbstractService {
     String queueLimitConfig = System.getenv(GRIZZLY_QUEUE_LIMIT_ENV);
     String corePoolSizeConfig = System.getenv(GRIZZLY_CORE_POOL_SIZE_ENV);
     String maxPoolSizeConfig = System.getenv(GRIZZLY_MAX_POOL_SIZE_ENV);
-    this.queueLimit = queueLimitConfig == null ? queueLimit : Integer.parseInt(queueLimitConfig);
-    this.corePoolSize = corePoolSizeConfig == null ? corePoolSize : Integer.parseInt(corePoolSizeConfig);
-    this.maxPoolSize = maxPoolSizeConfig == null ? maxPoolSize : Integer.parseInt(maxPoolSizeConfig);
+    this.queueLimit =
+      queueLimitConfig == null ? queueLimit
+                               : Integer.parseInt(queueLimitConfig);
+    this.corePoolSize =
+      corePoolSizeConfig == null ? corePoolSize
+                                 : Integer.parseInt(corePoolSizeConfig);
+    this.maxPoolSize =
+      maxPoolSizeConfig == null ? maxPoolSize
+                                : Integer.parseInt(maxPoolSizeConfig);
   }
 
 }

@@ -1,0 +1,28 @@
+
+apply plugin: 'java-library'
+
+sourceCompatibility = 9
+targetCompatibility = 9
+
+
+dependencies {
+
+  implementation project(':runner')
+  implementation project(':jersey-jwt')
+  implementation project(':jersey-core')
+
+  implementation 'name.falgout.jeffrey.testing.junit5:guice-extension:1.1.1'
+  implementation 'org.glassfish.jersey.test-framework:jersey-test-framework-core:2.29'
+  implementation 'org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-inmemory:2.29'
+  
+}
+
+
+dependencies {
+
+  implementation "org.assertj:assertj-core:3.14.0"
+  
+  implementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
+  implementation 'org.junit.jupiter:junit-jupiter-params:5.5.2'
+  
+}

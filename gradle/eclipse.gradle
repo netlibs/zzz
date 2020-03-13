@@ -1,7 +1,22 @@
 
 project.afterEvaluate {
 
-  if (project.tasks.findByName('eclipseJdt')) {
+  if (project.tasks.findByName('eclipseFactorypath')) {
+
+	project.task('configureBuildship').dependsOn(
+	    
+	    project.tasks['eclipseFactorypath'],
+	    project.tasks['eclipseJdt'],
+	    project.tasks['eclipseJdtApt']
+	    
+	)
+
+    project.eclipse {
+      synchronizationTasks configureBuildship
+    }
+  
+  }  
+  else if (project.tasks.findByName('cleanEclipseFactorypath')) {
 
 	  project.task('configureBuildship').dependsOn(
 	  
