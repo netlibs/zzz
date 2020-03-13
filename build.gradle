@@ -1,0 +1,21 @@
+
+plugins {
+    id 'net.ltgt.apt-eclipse' version '0.21'
+}
+
+allprojects {
+
+  group = 'io.netlibs.zzz'
+  
+  repositories {
+    jcenter()
+  }
+  
+}
+
+wrapper {
+  gradleVersion = "6.2.2"
+  doLast {
+    delete "${projectDir}/gradlew.bat"
+   }
+}

@@ -1,0 +1,5 @@
+
+rootProject.name = 'parent'
+
+include 'jersey-core'
+include 'jersey-jwt'
