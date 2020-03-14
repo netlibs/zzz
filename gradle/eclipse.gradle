@@ -1,24 +1,9 @@
 
 project.afterEvaluate {
 
-  if (project.tasks.findByName('eclipseFactorypath')) {
+  if (project.tasks.findByName('cleanEclipseFactorypath')) {
 
-	project.task('configureBuildship').dependsOn(
-	    
-	    project.tasks['eclipseFactorypath'],
-	    project.tasks['eclipseJdt'],
-	    project.tasks['eclipseJdtApt']
-	    
-	)
-
-    project.eclipse {
-      synchronizationTasks configureBuildship
-    }
-  
-  }  
-  else if (project.tasks.findByName('cleanEclipseFactorypath')) {
-
-	  project.task('configureBuildship').dependsOn(
+	  project.rootProject.tasks['configureBuildship'].dependsOn(
 	  
 	    project.tasks['cleanEclipseFactorypath'],
 	    project.tasks['cleanEclipseClasspath'],
@@ -30,12 +15,23 @@ project.afterEvaluate {
 	    project.tasks['eclipseJdtApt']
 	    
 	  )
-
-    project.eclipse {
-      synchronizationTasks configureBuildship
-    }
   
   }  
+  else if (project.tasks.findByName('eclipseFactorypath')) {
+
+	project.rootProject.tasks['configureBuildship'].dependsOn(
+	    
+	    project.tasks['eclipseFactorypath'],
+	    project.tasks['eclipseJdt'],
+	    project.tasks['eclipseJdtApt']
+	    
+	)
+
+  
+  }  
+  
+  //    dependsOn gradle.includedBuild('my-app').task(':run')
+  
 
   project.eclipse {
     project.name = "zzz:${project.name}"

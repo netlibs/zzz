@@ -1,5 +1,5 @@
 
-rootProject.name = 'parent'
+rootProject.name = 'zzz'
 
 include 'runner'
 include 'jersey-core'
@@ -8,3 +8,5 @@ include 'jersey-test'
 
 include 'jackson'
 include 'rds'
+include 'config'
+

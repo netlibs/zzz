@@ -2,6 +2,7 @@
 plugins {
     id 'net.ltgt.apt-eclipse' version '0.21'
     id 'maven-publish'
+    id 'eclipse'
 }
 
 allprojects {
@@ -23,6 +24,13 @@ wrapper {
 }
 
 
-allprojects {
+allprojects { project ->
   project.apply from: "${rootDir}/gradle/eclipse.gradle"
+}
+
+task configureBuildship {
+}
+
+eclipse {
+  synchronizationTasks configureBuildship
 }

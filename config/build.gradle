@@ -1,19 +1,14 @@
-
-plugins {
-    id 'java-library'
-}
-
 apply plugin: 'net.ltgt.apt-eclipse'
+apply plugin: 'java-library'
 apply plugin: 'maven-publish'
 
 sourceCompatibility = 9
 targetCompatibility = 9
 
 dependencies {
-  implementation project(':config')
-  implementation 'software.amazon.awssdk:rds:2.10.77'
+  implementation project(':jackson')
+  implementation 'software.amazon.awssdk:secretsmanager:2.10.86'
   implementation 'io.reactivex.rxjava3:rxjava:3.0.0'
-  api 'com.zaxxer:HikariCP:3.4.2'
 }
 
 dependencies {
