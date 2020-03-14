@@ -1,4 +1,4 @@
-package io.netlibs.zzz.jersey;
+package io.netlibs.zzz.jackson;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;

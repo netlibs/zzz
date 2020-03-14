@@ -5,6 +5,8 @@ import javax.ws.rs.ext.Provider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.netlibs.zzz.jackson.ObjectMapperFactory;
+
 
 @Provider
 public class MyObjectMapperProvider implements ContextResolver<ObjectMapper> {

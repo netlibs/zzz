@@ -5,3 +5,6 @@ include 'runner'
 include 'jersey-core'
 include 'jersey-jwt'
 include 'jersey-test'
+
+include 'jackson'
+include 'rds'

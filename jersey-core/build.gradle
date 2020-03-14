@@ -16,6 +16,8 @@ dependencies {
 
 dependencies {
 
+  implementation project(':jackson')
+
 	annotationProcessor 'org.immutables:value:2.8.3'
 	compileOnly 'org.immutables:value-annotations:2.8.3'
 	
