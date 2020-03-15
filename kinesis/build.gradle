@@ -1,15 +1,21 @@
+
+plugins {
+    id 'java-library'
+}
+
 apply plugin: 'net.ltgt.apt-eclipse'
-apply plugin: 'java-library'
 apply plugin: 'maven-publish'
 
 sourceCompatibility = 9
 targetCompatibility = 9
 
 dependencies {
+  implementation project(':aws')
   implementation project(':jackson')
-  implementation 'software.amazon.awssdk:secretsmanager:2.10.86'
-  implementation 'software.amazon.awssdk:ssm:2.10.86'
-  implementation 'io.reactivex.rxjava3:rxjava:3.0.0'
+  implementation project(':config')
+  implementation 'software.amazon.awssdk:auth:2.10.86'
+  implementation 'com.amazonaws:amazon-kinesis-producer:0.14.0'
+  api 'io.reactivex.rxjava3:rxjava:3.0.0'
 }
 
 dependencies {

@@ -1,0 +1,22 @@
+plugins {
+    id 'java-platform'
+}
+
+dependencies {
+  constraints {
+
+    api(project(":config"))
+    
+    api(project(":jackson"))
+    api(project(":jersey-core"))
+    api(project(":jersey-jwt"))
+    api(project(":runner"))
+    
+    api(project(":aws"))
+    api(project(":rds"))
+    api(project(":kinesis"))
+    
+  }
+}
+
+

@@ -12,8 +12,8 @@ dependencies {
   implementation project(':jersey-core')
 
   implementation 'name.falgout.jeffrey.testing.junit5:guice-extension:1.1.1'
-  implementation 'org.glassfish.jersey.test-framework:jersey-test-framework-core:2.29'
-  implementation 'org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-inmemory:2.29'
+  implementation 'org.glassfish.jersey.test-framework:jersey-test-framework-core:2.29.1'
+  implementation 'org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-inmemory:2.29.1'
   
 }
 

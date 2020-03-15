@@ -1,12 +1,16 @@
 
 rootProject.name = 'zzz'
 
-include 'runner'
+include 'platform'
+
 include 'jersey-core'
 include 'jersey-jwt'
 include 'jersey-test'
 
+include 'runner'
 include 'jackson'
 include 'rds'
 include 'config'
 
+include 'aws'
+include 'kinesis'

@@ -7,16 +7,15 @@ targetCompatibility = 9
 
 dependencies {
 
-	api 'com.fasterxml.jackson.core:jackson-annotations:2.9.9'
-	api 'com.fasterxml.jackson.core:jackson-databind:2.9.9'
+	api 'com.fasterxml.jackson.core:jackson-annotations:2.10.0'
+	api 'com.fasterxml.jackson.core:jackson-databind:2.10.0'
 
  	// -- jackson
-	implementation 'com.fasterxml.jackson.module:jackson-module-parameter-names:2.9.9'
-	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.9'
-	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.9.9'
-	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-guava:2.9.9'
-	
-	
+	implementation 'com.fasterxml.jackson.module:jackson-module-parameter-names:2.10.0'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.10.0'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.10.0'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-guava:2.10.0'
+		
 }
 
 

@@ -30,13 +30,19 @@ project.afterEvaluate {
   
   }  
   
-  //    dependsOn gradle.includedBuild('my-app').task(':run')
-  
 
   project.eclipse {
-    project.name = "zzz:${project.name}"
+    project.name = createProjectDisplayName()
     project.natures << 'org.eclipse.buildship.core.gradleprojectnature'
   }
 
+}
+
+
+def createProjectDisplayName() {
+  if (project == project.rootProject) {
+    return project.name  
+  }
+  return "${project.rootProject.name}${project.path}"
 }
 

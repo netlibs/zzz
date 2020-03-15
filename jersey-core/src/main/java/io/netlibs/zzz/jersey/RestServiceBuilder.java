@@ -7,7 +7,7 @@ public class RestServiceBuilder {
 
   private int port = 0;
   private MeterRegistry meterRegistry = new SimpleMeterRegistry();
-  private RestConfig restConfig;
+  private RestConfig restConfig = new RestConfig();
 
   public RestServiceBuilder port(int port) {
     this.port = port;
