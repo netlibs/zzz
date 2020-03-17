@@ -3,18 +3,20 @@ plugins {
     id 'net.ltgt.apt-eclipse' version '0.21'
     id 'maven-publish'
     id 'eclipse'
+    id 'com.palantir.git-version' version '0.12.2'
 }
+
+def details = versionDetails()
+
 
 allprojects {
-
   group = 'io.netlibs.zzz'
-  version = 'master-SNAPSHOT'
-  
+  version = (details.isCleanTag ? details.gitHash : "master-SNAPSHOT")  
   repositories {
     jcenter()
-  }
-  
+  }  
 }
+
 
 wrapper {
   gradleVersion = "6.2.2"
