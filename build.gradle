@@ -8,10 +8,13 @@ plugins {
 
 def details = versionDetails()
 
+ext {
+  releaseVersion = (details.isCleanTag ? details.gitHash : "${details.branchName}-SNAPSHOT") 
+}
 
 allprojects {
   group = 'io.netlibs.zzz'
-  version = (details.isCleanTag ? details.gitHash : "master-SNAPSHOT")  
+  version = releaseVersion  
   repositories {
     jcenter()
   }  
