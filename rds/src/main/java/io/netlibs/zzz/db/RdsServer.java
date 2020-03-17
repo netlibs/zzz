@@ -20,13 +20,13 @@ public class RdsServer {
 
   private HostAndPort target;
   private String dbuser;
-  private String dbpass;
   private String dbname;
+  private Region region;
 
-  private RdsServer(HostAndPort target, String dbuser, String dbpass, String dbname) {
+  private RdsServer(Region region, HostAndPort target, String dbuser, String dbname) {
+    this.region = region;
     this.target = target;
     this.dbuser = dbuser;
-    this.dbpass = dbpass;
     this.dbname = dbname;
   }
 
@@ -53,9 +53,9 @@ public class RdsServer {
     int port = endpoint.port();
 
     return new RdsServer(
+      region,
       HostAndPort.fromParts(hostname, port),
       dbuser,
-      generateAuthToken(region, hostname, port, dbuser, credentialsProvider),
       dbname);
 
   }
@@ -86,8 +86,8 @@ public class RdsServer {
 
   }
 
-  public String dbpass() {
-    return this.dbpass;
+  public String dbpass(AwsCredentialsProvider credentialsProvider) {
+    return Rds.iamCredentials(credentialsProvider.resolveCredentials(), Instant.now().plus(15, ChronoUnit.MINUTES), this.region, this.target, this.dbuser);
   }
 
   public String jdbcUrl() {

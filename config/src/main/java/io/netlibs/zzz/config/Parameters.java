@@ -15,8 +15,7 @@ public class Parameters {
       .build();
 
   public static Flowable<ParameterValue<PValue>> byPath(String prefix) {
-    return Single
-      .fromCompletionStage(ssmManager.getParametersByPath(b -> b.path(prefix).withDecryption(true)))
+    return Single.defer(() -> Single.fromCompletionStage(ssmManager.getParametersByPath(b -> b.path(prefix).withDecryption(true))))
       .toFlowable()
       .flatMapIterable(e -> e.parameters())
       .map(ParameterValue::from)
@@ -31,11 +30,18 @@ public class Parameters {
   }
 
   public static Flowable<ParameterValue<PValue>> forName(String name) {
-    return Single
-      .fromCompletionStage(ssmManager.getParameter(b -> b.name(name).withDecryption(true)))
+    return Single.defer(() -> Single.fromCompletionStage(ssmManager.getParameter(b -> b.name(name).withDecryption(true))))
       .toFlowable()
       .map(e -> e.parameter())
       .map(ParameterValue::from)
+      .concatWith(Flowable.never());
+  }
+
+  public static <T> Flowable<ParameterValue<T>> forName(String name, Class<T> type) {
+    Function<String, T> mapper = JsonFunctions.readValue(type);
+    return forName(name)
+      .mapOptional(e -> e.castOptional(ParameterValue.SecureStringValue.class))
+      .map(e -> e.convert(payload -> mapper.apply(payload.secureValue())))
       .concatWith(Flowable.never());
   }
 

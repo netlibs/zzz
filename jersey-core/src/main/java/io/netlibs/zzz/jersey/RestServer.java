@@ -22,7 +22,6 @@ public class RestServer extends AbstractService {
 
   private RestConfig resourceConfig;
   private HttpServer grizzlyServer;
-  private MeterRegistry meterRegistry;
 
   private URI baseUri;
 
@@ -39,9 +38,8 @@ public class RestServer extends AbstractService {
   private static final String KEYSTORE_PWD_ENV = "KEYSTORE_PWD";
 
   @Inject
-  public RestServer(RestConfig config, MeterRegistry meterRegistry, @Named("port") int port) {
+  public RestServer(RestConfig config, @Named("port") int port) {
     this.resourceConfig = config;
-    this.meterRegistry = meterRegistry;
     this.baseUri = URI.create("http://0.0.0.0:" + port + "/");
   }
 

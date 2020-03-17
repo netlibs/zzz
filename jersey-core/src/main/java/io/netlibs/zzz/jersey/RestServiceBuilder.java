@@ -1,12 +1,8 @@
 package io.netlibs.zzz.jersey;
 
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
-
 public class RestServiceBuilder {
 
   private int port = 0;
-  private MeterRegistry meterRegistry = new SimpleMeterRegistry();
   private RestConfig restConfig = new RestConfig();
 
   public RestServiceBuilder port(int port) {
@@ -14,10 +10,6 @@ public class RestServiceBuilder {
     return this;
   }
 
-  public RestServiceBuilder meterRegistry(MeterRegistry meterRegistry) {
-    this.meterRegistry = meterRegistry;
-    return this;
-  }
 
   public RestServiceBuilder register(Object component) {
     this.restConfig.register(component);
@@ -25,7 +17,7 @@ public class RestServiceBuilder {
   }
 
   public RestServer build() {
-    return new RestServer(restConfig, meterRegistry, port);
+    return new RestServer(restConfig, port);
   }
 
 }

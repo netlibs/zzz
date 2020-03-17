@@ -12,6 +12,7 @@ import org.glassfish.jersey.media.sse.SseFeature;
 import org.glassfish.jersey.message.DeflateEncoder;
 import org.glassfish.jersey.message.GZipEncoder;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.server.filter.EncodingFilter;
 
 import com.google.inject.Injector;
@@ -24,18 +25,26 @@ public class RestConfig extends ResourceConfig {
 
   public RestConfig() {
 
+    property(ServerProperties.WADL_FEATURE_DISABLE, true);
     property(CommonProperties.FEATURE_AUTO_DISCOVERY_DISABLE, true);
 
     this.register(DeflateEncoder.class);
     this.register(GZipEncoder.class);
     this.register(EncodingFilter.class);
 
-    this.register(RuntimeExceptionMapper.class);
+    this.register(LoggingExceptionMapper.class);
+
     this.register(SseFeature.class);
-    this.register(CORSResponseFilter.class);
+    this.register(CorsFeature.class);
+    // this.register(CORSResponseFilter.class);
     this.register(new MyObjectMapperProvider());
     this.register(JacksonFeature.class);
 
+  }
+
+  public RestConfig(Set<Feature> features) {
+    this();
+    features.forEach(this::register);
   }
 
   @Inject

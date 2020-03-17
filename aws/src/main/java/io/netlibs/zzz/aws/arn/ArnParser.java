@@ -75,6 +75,8 @@ public class ArnParser {
         return createKinesis(components);
       case "execute-api":
         return createExecuteApi(components);
+      case "rds":
+        return createRds(components);
       default:
         return new UnknownArnUri(components);
     }
@@ -174,6 +176,37 @@ public class ArnParser {
             .build();
         }
 
+    }
+
+    return new UnknownArnUri(components);
+
+  }
+
+  private static ArnUri createRds(ImmutableList<String> components) {
+
+    ImmutableList<String> parts = ImmutableList.copyOf(Splitter.on(':').limit(2).split(components.get(5)));
+
+    switch (parts.get(0)) {
+      case "cluster":
+        Verify.verify(parts.size() == 2);
+        return ImmutableRdsClusterArn.builder()
+          .partition(components.get(1))
+          .service(components.get(2))
+          .region(components.get(3))
+          .accountId(components.get(4))
+          .resource(components.get(5))
+          .clusterId(parts.get(1))
+          .build();
+      case "db":
+        Verify.verify(parts.size() == 2);
+        return ImmutableRdsDbArn.builder()
+          .partition(components.get(1))
+          .service(components.get(2))
+          .region(components.get(3))
+          .accountId(components.get(4))
+          .resource(components.get(5))
+          .instanceId(parts.get(1))
+          .build();
     }
 
     return new UnknownArnUri(components);

@@ -1,8 +1,12 @@
 package io.netlibs.zzz.db;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.concurrent.TimeUnit;
+
 import javax.sql.DataSource;
 
-import com.google.common.util.concurrent.AbstractService;
+import com.google.common.util.concurrent.AbstractScheduledService;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -10,32 +14,28 @@ import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 
-public class RdsDataSourceService extends AbstractService {
+public class RdsDataSourceService extends AbstractScheduledService {
 
   private RdsServer server;
   private HikariConfig config;
-  private AwsCredentialsProvider credentialsProvider;
   private HikariDataSource dataSource;
-  private RdsCredentialService credentialService;
+  private AwsCredentialsProvider credentialsProvider;
 
   public RdsDataSourceService(AwsCredentialsProvider credentialsProvider, RdsServer server, HikariConfig config) {
     this.server = server;
     this.config = config;
     this.credentialsProvider = credentialsProvider;
-  }
-
-  @Override
-  protected void doStart() {
     this.dataSource = new HikariDataSource(config);
-    this.credentialService = new RdsCredentialService(dataSource, server);
-    this.credentialService.startAsync().awaitRunning();
-    this.notifyStarted();
   }
 
   @Override
-  protected void doStop() {
-    this.credentialService.stopAsync().awaitTerminated();
-    this.notifyStopped();
+  protected void runOneIteration() throws Exception {
+    this.dataSource.setPassword(server.dbpass(this.credentialsProvider));
+  }
+
+  @Override
+  protected Scheduler scheduler() {
+    return Scheduler.newFixedDelaySchedule(0, 10, TimeUnit.MINUTES);
   }
 
   public static RdsDataSourceService create(HikariConfig config, String rdsInstanceId, String dbuser, String dbname, String region) {
@@ -49,7 +49,7 @@ public class RdsDataSourceService extends AbstractService {
     RdsServer server = RdsServer.forInstance(credentialsProvider, rdsInstanceId, dbuser, dbname, Region.of(region));
     HikariConfig config = defaultHikariConfig();
     config.setUsername(dbuser);
-    config.setPassword(server.dbpass());
+    config.setPassword(server.dbpass(credentialsProvider));
     config.setJdbcUrl(server.jdbcUrl());
     return new RdsDataSourceService(credentialsProvider, server, config);
   }
