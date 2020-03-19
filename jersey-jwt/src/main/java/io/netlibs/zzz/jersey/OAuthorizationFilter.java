@@ -24,6 +24,7 @@ import javax.ws.rs.ext.Provider;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
@@ -60,26 +61,33 @@ public class OAuthorizationFilter implements ContainerRequestFilter {
     ImmutableSet<String> allowedIssuers =
       items.stream()
         .flatMap(ant -> Arrays.stream(ant.issuer()))
+        .filter(str -> !Strings.isNullOrEmpty(str))
         .collect(ImmutableSet.toImmutableSet());
 
     ImmutableSet<String> requiredAudiences =
       items.stream()
         .flatMap(ant -> Arrays.stream(ant.audience()))
+        .filter(str -> !Strings.isNullOrEmpty(str))
         .collect(ImmutableSet.toImmutableSet());
 
     ImmutableSet<String> scopes =
       items.stream()
         .flatMap(ant -> Arrays.stream(ant.scopes()))
+        .filter(str -> !Strings.isNullOrEmpty(str))
         .collect(ImmutableSet.toImmutableSet());
 
     try {
 
       JwtSecurtyContext jwt = (JwtSecurtyContext) requestContext.getSecurityContext();
 
+      log.info("REQ {} {}", requestContext.getMethod(), requestContext.getUriInfo().getPath());
+      log.info("NEED: iss {}, aud {}, scopes {}", allowedIssuers, requiredAudiences, scopes);
+      log.info("HAVE: iss {}, aud {}, scopes {}", jwt.issuer(), jwt.audiences(), jwt.scopes());
+
       checkIssuer(jwt, allowedIssuers);
       checkAudiences(jwt, requiredAudiences);
       checkPermissions(jwt, scopes);
-      
+
       // all passed!
 
     }
@@ -91,7 +99,8 @@ public class OAuthorizationFilter implements ContainerRequestFilter {
     catch (Exception e) {
 
       log.warn("JWT problem: {}", e.getMessage(), e);
-
+      ObjectNode body = JsonNodeFactory.instance.objectNode();
+      body.put("message", "auth error");
       requestContext.abortWith(
         Response.status(
           Response.Status.FORBIDDEN)
@@ -138,7 +147,7 @@ public class OAuthorizationFilter implements ContainerRequestFilter {
 
     ObjectNode error = body.putObject("error");
 
-    error.put("code", "unsupported_issuer");
+    error.put("message", "unsupported issuer");
 
     throw new WebApplicationException(
       Response.status(Status.FORBIDDEN)
@@ -167,7 +176,7 @@ public class OAuthorizationFilter implements ContainerRequestFilter {
 
     ObjectNode error = body.putObject("error");
 
-    error.put("code", "missing_audience");
+    error.put("message", "invalid audience");
 
     throw new WebApplicationException(
       Response.status(Status.FORBIDDEN)
