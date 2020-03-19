@@ -31,12 +31,10 @@ public class RestConfig extends ResourceConfig {
     this.register(DeflateEncoder.class);
     this.register(GZipEncoder.class);
     this.register(EncodingFilter.class);
-
     this.register(LoggingExceptionMapper.class);
-
     this.register(SseFeature.class);
     this.register(CorsFeature.class);
-    this.register(new MyObjectMapperProvider());
+    this.register(MyObjectMapperProvider.class);
     this.register(JacksonFeature.class);
 
   }

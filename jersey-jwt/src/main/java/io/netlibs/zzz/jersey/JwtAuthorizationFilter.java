@@ -7,14 +7,22 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Priority;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.Provider;
+import javax.ws.rs.ext.Providers;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.ImmutableList;
 import com.google.common.net.HttpHeaders;
 
@@ -24,9 +32,14 @@ import com.google.common.net.HttpHeaders;
 public class JwtAuthorizationFilter implements ContainerRequestFilter {
 
   private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(JwtAuthorizationFilter.class);
+
   private static final String AUTH_SCHEME = ("Bearer").toLowerCase();
   private final JwkFetcher jwkProvider;
 
+  @Context
+  private Providers providers;
+
+  @Inject
   public JwtAuthorizationFilter() {
     OkHttpJwkFetcher fetcher = new OkHttpJwkFetcher(new JwkWellKnownResolver());
     this.jwkProvider = CachingJwkFetcher.wrap(fetcher);
@@ -52,6 +65,21 @@ public class JwtAuthorizationFilter implements ContainerRequestFilter {
       }
 
       requestContext.setSecurityContext(ctx);
+
+    }
+    catch (JWTVerificationException ex) {
+
+      ObjectNode body = JsonNodeFactory.instance.objectNode();
+
+      body.putObject("error")
+        .put("type", ex.getClass().getSimpleName())
+        .put("message", ex.getMessage());
+
+      requestContext.abortWith(
+        Response.status(Response.Status.UNAUTHORIZED)
+          .entity(body)
+          .type(MediaType.APPLICATION_JSON)
+          .build());
 
     }
     catch (ExecutionException e) {
@@ -81,7 +109,12 @@ public class JwtAuthorizationFilter implements ContainerRequestFilter {
       return null;
     }
 
-    return JwtSecurtyContext.fromTokens(jwkProvider, jwts).get(5, TimeUnit.SECONDS);
+    ObjectMapper mapper =
+      providers.getContextResolver(ObjectMapper.class, null)
+        .getContext(ObjectMapper.class);
+
+    return JwtSecurtyContext.fromTokens(jwkProvider, jwts, mapper)
+      .get(5, TimeUnit.SECONDS);
 
   }
 

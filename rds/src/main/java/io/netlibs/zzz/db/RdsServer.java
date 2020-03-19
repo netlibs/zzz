@@ -8,10 +8,6 @@ import com.google.common.net.HostAndPort;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.auth.signer.Aws4Signer;
-import software.amazon.awssdk.auth.signer.params.Aws4PresignerParams;
-import software.amazon.awssdk.http.SdkHttpFullRequest;
-import software.amazon.awssdk.http.SdkHttpMethod;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.rds.RdsClient;
 import software.amazon.awssdk.services.rds.model.Endpoint;
@@ -57,32 +53,6 @@ public class RdsServer {
       HostAndPort.fromParts(hostname, port),
       dbuser,
       dbname);
-
-  }
-
-  static String generateAuthToken(Region region, String hostname, int port, String username, AwsCredentialsProvider credentialsProvider) {
-
-    Aws4PresignerParams params =
-      Aws4PresignerParams.builder()
-        .expirationTime(Instant.now().plus(15, ChronoUnit.MINUTES))
-        .signingName("rds-db")
-        .signingRegion(region)
-        .awsCredentials(credentialsProvider.resolveCredentials())
-        .build();
-
-    SdkHttpFullRequest request =
-      SdkHttpFullRequest
-        .builder()
-        .encodedPath("/")
-        .host(hostname)
-        .port(port)
-        .protocol("http") // Will be stripped off; but we need to satisfy SdkHttpFullRequest
-        .method(SdkHttpMethod.GET)
-        .appendRawQueryParameter("Action", "connect")
-        .appendRawQueryParameter("DBUser", username)
-        .build();
-
-    return Aws4Signer.create().presign(request, params).getUri().toString().substring("http://".length());
 
   }
 

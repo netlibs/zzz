@@ -18,7 +18,7 @@ public class RdsDataSourceService extends AbstractScheduledService {
   private HikariDataSource dataSource;
   private AwsCredentialsProvider credentialsProvider;
 
-  public RdsDataSourceService(AwsCredentialsProvider credentialsProvider, RdsServer server, HikariConfig config) {
+  private RdsDataSourceService(AwsCredentialsProvider credentialsProvider, RdsServer server, HikariConfig config) {
     this.server = server;
     this.credentialsProvider = credentialsProvider;
     this.dataSource = new HikariDataSource(config);
@@ -32,12 +32,6 @@ public class RdsDataSourceService extends AbstractScheduledService {
   @Override
   protected Scheduler scheduler() {
     return Scheduler.newFixedDelaySchedule(0, 10, TimeUnit.MINUTES);
-  }
-
-  public static RdsDataSourceService create(HikariConfig config, String rdsInstanceId, String dbuser, String dbname, String region) {
-    AwsCredentialsProvider credentialsProvider = DefaultCredentialsProvider.builder().build();
-    RdsServer server = RdsServer.forInstance(credentialsProvider, rdsInstanceId, dbuser, dbname, Region.of(region));
-    return new RdsDataSourceService(credentialsProvider, server, config);
   }
 
   public static RdsDataSourceService create(String rdsInstanceId, String dbuser, String dbname, String region) {
