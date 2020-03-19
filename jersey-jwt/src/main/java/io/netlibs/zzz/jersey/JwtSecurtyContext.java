@@ -1,5 +1,7 @@
 package io.netlibs.zzz.jersey;
 
+import static com.fasterxml.jackson.databind.DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY;
+
 import java.io.IOException;
 import java.security.Principal;
 import java.security.interfaces.RSAPrivateKey;
@@ -21,7 +23,9 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.RSAKeyProvider;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
@@ -32,11 +36,11 @@ public class JwtSecurtyContext implements SecurityContext, Principal, JsonWebTok
 
   private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(JwtSecurtyContext.class);
   private ObjectNode jwts;
-  private ObjectMapper mapper;
+  private ObjectReader reader;
 
   public JwtSecurtyContext(ObjectMapper mapper, ImmutableList<ObjectNode> jwts) {
     this.jwts = jwts.get(0);
-    this.mapper = mapper;
+    this.reader = mapper.reader(ACCEPT_SINGLE_VALUE_AS_ARRAY);
   }
 
   @Override
@@ -147,7 +151,15 @@ public class JwtSecurtyContext implements SecurityContext, Principal, JsonWebTok
   public <T> Optional<T> claim(String claimName, Class<T> valueType) {
     return Optional.ofNullable(this.jwts.get(claimName))
       .filter(n -> !n.isMissingNode())
-      .map(value -> mapper.convertValue(value, valueType));
+      .map(value -> {
+        try {
+          return reader.treeToValue(value, valueType);
+        }
+        catch (JsonProcessingException e) {
+          // TODO Auto-generated catch block
+          throw new RuntimeException(e);
+        }
+      });
   }
 
   public Range<Instant> validity() {
