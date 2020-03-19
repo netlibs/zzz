@@ -16,6 +16,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import io.netlibs.zzz.jersey.JwtAuthorizationFilter;
+import io.netlibs.zzz.jersey.OAuthorizationFilter;
 import io.netlibs.zzz.jersey.RestConfig;
 import io.netlibs.zzz.runner.Runner;
 
@@ -41,6 +42,7 @@ public abstract class JerseyTest {
     RestConfig restConfig = new RestConfig();
     resource().forEach(restConfig::register);
     restConfig.registerInstances(new JwtAuthorizationFilter());
+    restConfig.registerInstances(new OAuthorizationFilter());
     DeploymentContext ctx = DeploymentContext.builder(restConfig).build();
     this.container = factory.create(UriBuilder.fromUri("http://localhost/").port(9998).build(), ctx);
     this.client = ClientBuilder.newClient(container.getClientConfig());
