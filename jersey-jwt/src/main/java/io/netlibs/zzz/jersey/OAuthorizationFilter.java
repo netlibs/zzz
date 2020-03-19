@@ -79,11 +79,23 @@ public class OAuthorizationFilter implements ContainerRequestFilter {
       checkIssuer(jwt, allowedIssuers);
       checkAudiences(jwt, requiredAudiences);
       checkPermissions(jwt, scopes);
+      
+      // all passed!
+
+    }
+    catch (WebApplicationException e) {
+
+      requestContext.abortWith(e.getResponse());
 
     }
     catch (Exception e) {
 
-      requestContext.abortWith(Response.status(Response.Status.FORBIDDEN).build());
+      log.warn("JWT problem: {}", e.getMessage(), e);
+
+      requestContext.abortWith(
+        Response.status(
+          Response.Status.FORBIDDEN)
+          .build());
 
     }
 

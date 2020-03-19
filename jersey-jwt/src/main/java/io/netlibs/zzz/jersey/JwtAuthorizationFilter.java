@@ -69,6 +69,8 @@ public class JwtAuthorizationFilter implements ContainerRequestFilter {
     }
     catch (JWTVerificationException ex) {
 
+      log.warn("JWT verification problem: {}", ex.getMessage(), ex);
+
       ObjectNode body = JsonNodeFactory.instance.objectNode();
 
       body.putObject("error")
@@ -83,9 +85,11 @@ public class JwtAuthorizationFilter implements ContainerRequestFilter {
 
     }
     catch (ExecutionException e) {
+      log.warn("JWT problem: {}", e.getMessage(), e);
       requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
     }
     catch (TimeoutException e) {
+      log.warn("JWT problem: {}", e.getMessage(), e);
       requestContext.abortWith(Response.status(Response.Status.SERVICE_UNAVAILABLE).build());
     }
     catch (InterruptedException e) {
