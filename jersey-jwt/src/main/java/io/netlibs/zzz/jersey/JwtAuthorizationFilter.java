@@ -57,8 +57,12 @@ public class JwtAuthorizationFilter implements ContainerRequestFilter {
     catch (ExecutionException e) {
       requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
     }
-    catch (InterruptedException | TimeoutException e) {
+    catch (TimeoutException e) {
       requestContext.abortWith(Response.status(Response.Status.SERVICE_UNAVAILABLE).build());
+    }
+    catch (InterruptedException e) {
+      requestContext.abortWith(Response.status(Response.Status.SERVICE_UNAVAILABLE).build());
+      Thread.currentThread().interrupt();
     }
 
   }
@@ -67,7 +71,7 @@ public class JwtAuthorizationFilter implements ContainerRequestFilter {
 
     List<String> jwts =
       authorizations.stream()
-        .map(e -> e.trim())
+        .map(String::trim)
         .filter(e -> e.toLowerCase().startsWith(AUTH_SCHEME + " "))
         .map(e -> (e.substring(AUTH_SCHEME.length() + 1)).trim())
         .collect(ImmutableList.toImmutableList());

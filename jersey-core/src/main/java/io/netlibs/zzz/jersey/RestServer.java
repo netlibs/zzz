@@ -16,8 +16,6 @@ import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 
 import com.google.common.util.concurrent.AbstractService;
 
-import io.micrometer.core.instrument.MeterRegistry;
-
 public class RestServer extends AbstractService {
 
   private RestConfig resourceConfig;
@@ -98,9 +96,9 @@ public class RestServer extends AbstractService {
 
     }
     catch (Exception ex) {
-      ex.printStackTrace();
       this.notifyFailed(ex);
     }
+    
   }
 
   @Override

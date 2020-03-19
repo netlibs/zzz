@@ -1,7 +1,5 @@
 package io.netlibs.zzz.jersey;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -23,13 +21,13 @@ public class LoggingExceptionMapper implements ExceptionMapper<Throwable> {
 
     return Response.status(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
       .type(MediaType.APPLICATION_JSON_TYPE)
-      .entity(new ErrorResponse(String.format("internal error")))
+      .entity(new ErrorResponse("internal error"))
       .build();
   }
 
   private Response processWebApplicationException(WebApplicationException exception) {
 
-    final Response response = ((WebApplicationException) exception).getResponse();
+    final Response response = exception.getResponse();
 
     Response.Status.Family family = response.getStatusInfo().getFamily();
 
@@ -45,7 +43,7 @@ public class LoggingExceptionMapper implements ExceptionMapper<Throwable> {
       .type(MediaType.APPLICATION_JSON_TYPE)
       .entity(new ErrorResponse(response.getStatus(), exception.getLocalizedMessage()))
       .build();
-    
+
   }
 
 }

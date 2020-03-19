@@ -25,12 +25,6 @@ import io.netlibs.zzz.runner.Runner;
 
 public abstract class JerseyTest {
 
-  private final org.slf4j.Logger log;
-
-  protected JerseyTest() {
-    log = org.slf4j.LoggerFactory.getLogger(getClass());
-  }
-
   static {
     Runner.prepare();
   }

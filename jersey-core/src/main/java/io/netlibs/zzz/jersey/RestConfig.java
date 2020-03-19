@@ -36,7 +36,6 @@ public class RestConfig extends ResourceConfig {
 
     this.register(SseFeature.class);
     this.register(CorsFeature.class);
-    // this.register(CORSResponseFilter.class);
     this.register(new MyObjectMapperProvider());
     this.register(JacksonFeature.class);
 

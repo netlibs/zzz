@@ -32,6 +32,7 @@ public interface DbSecretValue extends WithDbSecretValue {
       return new URI(scheme, userinfo, host(), port(), "/" + dbname(), null, null);
     }
     catch (URISyntaxException e) {
+      // TODO Auto-generated catch block
       throw new RuntimeException(e);
     }
   }

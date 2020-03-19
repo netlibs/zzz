@@ -1,7 +1,5 @@
 package io.netlibs.zzz.db;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
@@ -17,13 +15,11 @@ import software.amazon.awssdk.regions.Region;
 public class RdsDataSourceService extends AbstractScheduledService {
 
   private RdsServer server;
-  private HikariConfig config;
   private HikariDataSource dataSource;
   private AwsCredentialsProvider credentialsProvider;
 
   public RdsDataSourceService(AwsCredentialsProvider credentialsProvider, RdsServer server, HikariConfig config) {
     this.server = server;
-    this.config = config;
     this.credentialsProvider = credentialsProvider;
     this.dataSource = new HikariDataSource(config);
   }
